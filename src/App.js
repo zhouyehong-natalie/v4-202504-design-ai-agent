@@ -204,7 +204,7 @@ function App() {
       if (
         (states.selectedModel.startsWith("gpt") && !states.apiKey) ||
         (states.selectedModel === "claude-3-7-sonnet" && !states.claudeApiKey) ||
-        (states.selectedModel === "deepseek-v1" && !states.deepseekApiKey)
+        (states.selectedModel === "deepseek-R1" && !states.deepseekApiKey)
       ) {
         states.setApiError("Please provide the appropriate API key for the selected model");
         states.setDesignGuide("Error: Missing API key for the selected model");
@@ -252,7 +252,7 @@ Based on this user profile, generate a comprehensive design guide that would be 
               max_tokens: states.maxTokens,
             });
             
-            response = await fetch("https://api.openai.com/v1/chat/completions", {
+            response = await fetch("https://api.openai.com/R1/chat/completions", {
               method: "POST",
               headers: {
                 "Content-Type": "application/json",
@@ -276,7 +276,7 @@ Based on this user profile, generate a comprehensive design guide that would be 
               max_tokens: states.maxTokens,
             });
             
-            response = await fetch("https://api.anthropic.com/v1/messages", {
+            response = await fetch("https://api.anthropic.com/R1/messages", {
               method: "POST",
               headers: {
                 "Content-Type": "application/json",
@@ -294,22 +294,22 @@ Based on this user profile, generate a comprehensive design guide that would be 
             });
             break;
             
-          case "deepseek-v1":
+          case "deepseek-R1":
             // Deepseek API call
             console.log("API Request (Deepseek):", {
-              model: "deepseek-v1",
+              model: "deepseek-R1",
               temperature: states.temperature,
               max_tokens: states.maxTokens,
             });
             
-            response = await fetch("https://api.siliconflow.cn/v1/chat/completions", {
+            response = await fetch("https://api.siliconflow.cn/R1/chat/completions", {
               method: "POST",
               headers: {
                 "Content-Type": "application/json",
                 "Authorization": `Bearer ${states.deepseekApiKey}`
               },
               body: JSON.stringify({
-                model: "deepseek-v1",
+                model: "deepseek-R1",
                 messages: [{ role: "user", content: fullPrompt }],
                 temperature: states.temperature,
                 max_tokens: states.maxTokens,
@@ -337,7 +337,7 @@ Based on this user profile, generate a comprehensive design guide that would be 
           group: group
         });
         
-        response = await fetch("https://api.openai.com/v1/chat/completions", {
+        response = await fetch("https://api.openai.com/R1/chat/completions", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -376,7 +376,7 @@ Based on this user profile, generate a comprehensive design guide that would be 
       if (group === "C" && states.selectedModel === "claude-3-7-sonnet") {
         // Claude API response format
         result = data.content && data.content[0]?.text || "Generation failed";
-      } else if (group === "C" && states.selectedModel === "deepseek-v1") {
+      } else if (group === "C" && states.selectedModel === "deepseek-R1") {
         // Deepseek API response format (similar to OpenAI)
         result = data.choices && data.choices[0]?.message?.content || "Generation failed";
       } else {
@@ -470,7 +470,7 @@ Based on this user profile, generate a comprehensive design guide that would be 
         feedback: userFeedback ? userFeedback.substring(0, 20) + "..." : "empty"
       });
       
-      const response = await fetch("https://api.openai.com/v1/chat/completions", {
+      const response = await fetch("https://api.openai.com/R1/chat/completions", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -633,45 +633,6 @@ Return ONLY the formatted dimensions, one per line.`
     </>
   );
 
-  return (
-    <div className="app-container">
-      <h1 className="page-title">Human-AI Collaborative Method for Future-Oriented Design Prompt System</h1>
-      
-      <div className="layout-container">
-        <div className="group-selector">
-          <button 
-            className={`group-button ${activeGroup === "A" ? "active" : ""}`} 
-            onClick={() => setActiveGroup("A")}
-          >
-            Group A (with Design Expert)
-          </button>
-          <button 
-            className={`group-button ${activeGroup === "B" ? "active" : ""}`} 
-            onClick={() => setActiveGroup("B")}
-          >
-            Group B (without Design Expert)
-          </button>
-          <button 
-            className={`group-button ${activeGroup === "C" ? "active" : ""}`} 
-            onClick={() => setActiveGroup("C")}
-          >
-            Group C (Silicon Sample)
-          </button>
-        </div>
-        
-        <div className="container">
-          {activeGroup === "A" 
-            ? renderGroupA() 
-            : activeGroup === "B" 
-              ? renderGroupB() 
-              : renderGroupC()
-          }
-        </div>
-      </div>
-
-      <style>
-        {`
-
   // UI Component for Group B
   const renderGroupB = () => (
     <>
@@ -768,140 +729,414 @@ Return ONLY the formatted dimensions, one per line.`
       </div>
     </>
   );
-  
-  // UI Component for Group C
-  const renderGroupC = () => (
-    <>
-      <div className="left-section">
-        <h2>Digital Clone User ID</h2>
-        <input
-          placeholder="Enter user ID (e.g. B1, B2, B3, etc.)..."
-          value={userIdC}
-          onChange={(e) => setUserIdC(e.target.value)}
-          className="full-width"
-        />
-        
-        <h2>Designer Goal</h2>
-        <textarea
-          placeholder="Enter AI designer goal..."
-          value={designerGoalC}
-          onChange={(e) => setDesignerGoalC(e.target.value)}
-        />
-        
-        <h2>User Profile</h2>
-        <textarea
-          className="user-profile-box"
-          placeholder="Enter complete user profile information..."
-          value={userProfileC}
-          onChange={(e) => setUserProfileC(e.target.value)}
-        />
-        
-        <h2>Custom Prompt</h2>
-        <textarea
-          placeholder="Enter custom prompt..."
-          value={customPromptC}
-          onChange={(e) => setCustomPromptC(e.target.value)}
-        />
-        
-        {/* Model selection dropdown */}
-        <h2>Select AI Model</h2>
-        <select 
-          className="model-select"
-          value={selectedModelC}
-          onChange={(e) => setSelectedModelC(e.target.value)}
-        >
-          <option value="gpt-4o">OpenAI GPT-4o</option>
-          <option value="gpt-o1">OpenAI GPT-o1</option>
-          <option value="claude-3-7-sonnet">Claude 3.7 Sonnet</option>
-          <option value="deepseek-v1">Deepseek V1</option>
-        </select>
-        
-        {/* Display appropriate API key input field based on selected model */}
-        {(selectedModelC === "gpt-4o" || selectedModelC === "gpt-o1") && (
-          <>
-            <h2>OpenAI API Key</h2>
-            <input
-              type="password"
-              placeholder="Enter OpenAI API key..."
-              value={apiKeyC}
-              onChange={(e) => setApiKeyC(e.target.value)}
-              className="full-width"
-            />
-          </>
-        )}
-        
-        {selectedModelC === "claude-3-7-sonnet" && (
-          <>
-            <h2>Anthropic API Key</h2>
-            <input
-              type="password"
-              placeholder="Enter Claude API key..."
-              value={claudeApiKeyC}
-              onChange={(e) => setClaudeApiKeyC(e.target.value)}
-              className="full-width"
-            />
-          </>
-        )}
-        
-        {selectedModelC === "deepseek-v1" && (
-          <>
-            <h2>Deepseek API Key</h2>
-            <input
-              type="password"
-              placeholder="Enter Deepseek API key..."
-              value={deepseekApiKeyC}
-              onChange={(e) => setDeepseekApiKeyC(e.target.value)}
-              className="full-width"
-            />
-          </>
-        )}
-        
-        {/* Display API error message */}
-        {apiErrorC && (
-          <div className="api-error">
-            Error: {apiErrorC}
-          </div>
-        )}
-        
+// UI Component for Group C
+const renderGroupC = () => (
+  <>
+    <div className="left-section">
+      <h2>Designer Goal</h2>
+      <textarea
+        placeholder="Enter AI designer goal..."
+        value={designerGoalC}
+        onChange={(e) => setDesignerGoalC(e.target.value)}
+      />
+
+      <h2>User Dimensions</h2>
+      <textarea
+        className="user-profile-box"
+        placeholder="Enter complete user profile information..."
+        value={userProfileC}
+        onChange={(e) => setUserProfileC(e.target.value)}
+      />
+
+      <h2>Custom Prompt</h2>
+      <textarea
+        placeholder="Enter custom prompt..."
+        value={customPromptC}
+        onChange={(e) => setCustomPromptC(e.target.value)}
+      />
+
+      <h2>Digital Clone User ID</h2>
+      <input
+        placeholder="Enter user ID (e.g. C1, C2, C3, etc.)..."
+        value={userIdC}
+        onChange={(e) => setUserIdC(e.target.value)}
+      />
+
+      <h2>Select AI Model</h2>
+      <select 
+        className="model-select"
+        value={selectedModelC}
+        onChange={(e) => setSelectedModelC(e.target.value)}
+      >
+        <option value="gpt-4o">OpenAI GPT-4o</option>
+        <option value="gpt-o1">OpenAI GPT-o1</option>
+        <option value="claude-3-7-sonnet">Claude 3.7 Sonnet</option>
+        <option value="deepseek-R1">Deepseek R1</option>
+      </select>
+      
+      {(selectedModelC === "gpt-4o" || selectedModelC === "gpt-o1") && (
+        <>
+          <h2>OpenAI API Key</h2>
+          <input
+            type="password"
+            placeholder="Enter OpenAI API key..."
+            value={apiKeyC}
+            onChange={(e) => setApiKeyC(e.target.value)}
+          />
+        </>
+      )}
+      
+      {selectedModelC === "claude-3-7-sonnet" && (
+        <>
+          <h2>Anthropic API Key</h2>
+          <input
+            type="password"
+            placeholder="Enter Claude API key..."
+            value={claudeApiKeyC}
+            onChange={(e) => setClaudeApiKeyC(e.target.value)}
+          />
+        </>
+      )}
+      
+      {selectedModelC === "deepseek-R1" && (
+        <>
+          <h2>Deepseek API Key</h2>
+          <input
+            type="password"
+            placeholder="Enter Deepseek API key..."
+            value={deepseekApiKeyC}
+            onChange={(e) => setDeepseekApiKeyC(e.target.value)}
+          />
+        </>
+      )}
+      
+      {apiErrorC && (
+        <div className="api-error">
+          Error: {apiErrorC}
+        </div>
+      )}
+      
+      <button 
+        className="generate-button"
+        onClick={() => generateDesignGuide("C")}
+        disabled={loadingC}
+      >
+        {loadingC ? "Generating..." : "Generate Digital Clone Design Guide"}
+      </button>
+    </div>
+
+    <div className="right-section expanded">
+      <h2 className="guide-header">
+        Design Guide for Digital Clone {userIdC || "User"}
         <button 
-          className="full-width generate-button"
-          onClick={() => generateDesignGuide("C")}
-          disabled={loadingC}
+          className="copy-button" 
+          onClick={() => copyToClipboard(designGuideC)}
         >
-          {loadingC ? "Generating..." : "Generate Digital Clone Design Guide"}
+          Copy
         </button>
+      </h2>
+      <textarea 
+        className="design-guide-box"
+        readOnly
+        value={designGuideC}
+        placeholder="Generated design guide for digital clone will appear here..."
+      />
+
+      <h2 className="evaluation-header">
+        Real User Evaluation
+        <button 
+          className="copy-button"
+          onClick={saveUserEvaluation}
+          disabled={savingEvaluation}
+        >
+          {savingEvaluation ? "Saving..." : "Save"}
+        </button>
+      </h2>
+      <textarea
+        className="notes-box"
+        placeholder="Enter real user's evaluation of this digital clone's design guide..."
+        value={userEvaluation}
+        onChange={(e) => setUserEvaluation(e.target.value)}
+      />
+    </div>
+  </>
+);
+
+  return (
+    <div className="app-container">
+      <h1 className="page-title">Human-AI Collaborative Method for Future-Oriented Design Prompt System</h1>
+      
+      <div className="layout-container">
+        <div className="group-selector">
+          <button 
+            className={`group-button ${activeGroup === "A" ? "active" : ""}`} 
+            onClick={() => setActiveGroup("A")}
+          >
+            Group A (with Design Expert)
+          </button>
+          <button 
+            className={`group-button ${activeGroup === "B" ? "active" : ""}`} 
+            onClick={() => setActiveGroup("B")}
+          >
+            Group B (without Design Expert)
+          </button>
+          <button 
+            className={`group-button ${activeGroup === "C" ? "active" : ""}`} 
+            onClick={() => setActiveGroup("C")}
+          >
+            Group C (Silicon Sample)
+          </button>
+        </div>
+        
+        <div className="container">
+          {activeGroup === "A" 
+            ? renderGroupA() 
+            : activeGroup === "B" 
+              ? renderGroupB() 
+              : renderGroupC()
+          }
+        </div>
       </div>
 
-      <div className="right-section expanded">
-        <h2 className="guide-header">
-          Design Guide for Digital Clone {userIdC || "User"}
-          <button 
-            className="copy-button" 
-            onClick={() => copyToClipboard(designGuideC)}
-          >
-            Copy
-          </button>
-        </h2>
-        <textarea 
-          className="design-guide-box"
-          readOnly
-          value={designGuideC}
-          placeholder="Generated design guide for digital clone will appear here..."
-        />
+      <style>
+        {`
+          /* Base styles */
+          * {
+            box-sizing: border-box;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+          }
+          
+          body {
+            margin: 0;
+            padding: 0;
+            background-color: #f5f5f7;
+          }
+          
+          .app-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+          }
+          
+          .page-title {
+            text-align: center;
+            margin-bottom: 30px;
+            color: #333;
+          }
+          
+          .layout-container {
+            display: flex;
+            flex-direction: column;
+          }
+          
+          .group-selector {
+            display: flex;
+            margin-bottom: 20px;
+            border-radius: 8px;
+            overflow: hidden;
+          }
+          
+          .group-button {
+            flex: 1;
+            padding: 12px;
+            background-color: #e0e0e0;
+            border: none;
+            cursor: pointer;
+            font-weight: 500;
+            transition: background-color 0.2s;
+          }
+          
+          .group-button.active {
+            background-color: #2563eb;
+            color: white;
+          }
+          
+          .container {
+            display: flex;
+            gap: 20px;
+          }
+          
+          .left-section, .right-section {
+            flex: 1;
+            padding: 20px;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+          }
+          
+          .right-section.expanded {
+            flex: 1.5;
+          }
+          
+          h2 {
+            margin-top: 0;
+            margin-bottom: 10px;
+            color: #333;
+          }
+          
+          textarea, input {
+            width: 100%;
+            padding: 8px 12px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            margin-bottom: 15px;
+            font-size: 14px;
+          }
+          
+          textarea {
+            min-height: 100px;
+            resize: vertical;
+          }
+          
+          .design-guide-box {
+            min-height: 300px;
+            background-color: #f9f9f9;
+          }
+          
+          .notes-box {
+            min-height: 200px;
+          }
+          
+          .guide-header, .notes-header, .feedback-header, .suggested-dimensions-header, .evaluation-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+          }
+          
+          .copy-button {
+            background-color: #2563eb;
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+          }
+          
+          .copy-button.saving {
+            background-color: #16a34a;
+          }
+          
+          .copy-button:disabled {
+            background-color: #9ca3af;
+            cursor: not-allowed;
+          }
+          
+          .user-profile-container {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 10px;
+          }
+          
+          .user-dimension {
+            flex: 0 0 150px;
+            min-height: 38px;
+          }
+          
+          .user-content {
+            flex: 1;
+            min-height: 38px;
+          }
+          
+          .small-button {
+            background-color: #f3f4f6;
+            border: 1px solid #d1d5db;
+            color: #374151;
+            padding: 6px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+            margin-bottom: 15px;
+          }
+          
+          .generate-button {
+            background-color: #2563eb;
+            color: white;
+            border: none;
+            padding: 10px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: 500;
+            margin-top: 10px;
+          }
+          
+          .generate-button:disabled {
+            background-color: #9ca3af;
+            cursor: not-allowed;
+          }
+          
+          .full-width {
+            width: 100%;
+          }
+          
+          .feedback-section {
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid #eee;
+          }
+          
+          .feedback-box, .suggested-dimensions-box {
+            min-height: 150px;
+          }
+          
+          .generate-dimensions-button {
+            background-color: #2563eb;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 10px 0;
+            font-weight: 500;
+          }
+          
+          .generate-dimensions-button:disabled {
+            background-color: #9ca3af;
+            cursor: not-allowed;
+          }
+          
+          .user-profile-box {
+            min-height: 150px;
+          }
+          
+          .model-select {
+            width: 100%;
+            padding: 8px 12px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            margin-bottom: 15px;
+            font-size: 14px;
+            background-color: white;
+          }
+          
+          .api-error {
+            background-color: #fee2e2;
+            color: #b91c1c;
+            padding: 10px;
+            border-radius: 4px;
+            margin-bottom: 15px;
+            font-size: 14px;
+          }
+          
+          /* Responsive layout */
+          @media (max-width: 1024px) {
+            .container {
+              flex-direction: column;
+            }
+            
+            .left-section, .right-section {
+              width: 100%;
+            }
+            
+            .right-section.expanded {
+              flex: 1;
+            }
+          }
+        `}
+      </style>
+    </div>
+  );
+}
 
-        <h2 className="evaluation-header">
-          Real User Evaluation
-          <button 
-            className={`copy-button ${savingEvaluation ? 'saving' : ''}`}
-            onClick={saveUserEvaluation}
-            disabled={savingEvaluation}
-          >
-            {savingEvaluation ? "Saving..." : "Save"}
-          </button>
-        </h2>
-        <textarea
-          className="notes-box"
-          placeholder="Enter real user's evaluation of this digital clone's design guide..."
-          value={userEvaluation}
-          onChange={(e) => setUserEvaluation(e.target.value)}
-        />
+export default App;
