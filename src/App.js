@@ -616,7 +616,7 @@ Return ONLY the formatted dimensions, one per line.`
         <h2 className="notes-header">
           Expert Notes
           <button 
-            className={`copy-button ${savingNotes ? 'saving' : ''}`}
+            className={"copy-button " + (savingNotes ? 'saving' : '')}
             onClick={saveDesignerNotes}
             disabled={savingNotes}
           >
@@ -632,45 +632,6 @@ Return ONLY the formatted dimensions, one per line.`
       </div>
     </>
   );
-
-  return (
-    <div className="app-container">
-      <h1 className="page-title">Human-AI Collaborative Method for Future-Oriented Design Prompt System</h1>
-      
-      <div className="layout-container">
-        <div className="group-selector">
-          <button 
-            className={`group-button ${activeGroup === "A" ? "active" : ""}`} 
-            onClick={() => setActiveGroup("A")}
-          >
-            Group A (with Design Expert)
-          </button>
-          <button 
-            className={`group-button ${activeGroup === "B" ? "active" : ""}`} 
-            onClick={() => setActiveGroup("B")}
-          >
-            Group B (without Design Expert)
-          </button>
-          <button 
-            className={`group-button ${activeGroup === "C" ? "active" : ""}`} 
-            onClick={() => setActiveGroup("C")}
-          >
-            Group C (Silicon Sample)
-          </button>
-        </div>
-        
-        <div className="container">
-          {activeGroup === "A" 
-            ? renderGroupA() 
-            : activeGroup === "B" 
-              ? renderGroupB() 
-              : renderGroupC()
-          }
-        </div>
-      </div>
-
-      <style>
-        {`
 
   // UI Component for Group B
   const renderGroupB = () => (
@@ -892,7 +853,7 @@ Return ONLY the formatted dimensions, one per line.`
         <h2 className="evaluation-header">
           Real User Evaluation
           <button 
-            className={`copy-button ${savingEvaluation ? 'saving' : ''}`}
+            className={"copy-button " + (savingEvaluation ? 'saving' : '')}
             onClick={saveUserEvaluation}
             disabled={savingEvaluation}
           >
@@ -905,3 +866,233 @@ Return ONLY the formatted dimensions, one per line.`
           value={userEvaluation}
           onChange={(e) => setUserEvaluation(e.target.value)}
         />
+      </div>
+    </>
+  );
+
+  return (
+    <div className="app-container">
+      <h1 className="page-title">Human-AI Collaborative Method for Future-Oriented Design Prompt System</h1>
+      
+      <div className="layout-container">
+        <div className="group-selector">
+          <button 
+            className={"group-button " + (activeGroup === "A" ? "active" : "")}
+            onClick={() => setActiveGroup("A")}
+          >
+            Group A (with Design Expert)
+          </button>
+          <button 
+            className={"group-button " + (activeGroup === "B" ? "active" : "")}
+            onClick={() => setActiveGroup("B")}
+          >
+            Group B (without Design Expert)
+          </button>
+          <button 
+            className={"group-button " + (activeGroup === "C" ? "active" : "")}
+            onClick={() => setActiveGroup("C")}
+          >
+            Group C (Silicon Sample)
+          </button>
+        </div>
+        
+        <div className="container">
+          {activeGroup === "A" 
+            ? renderGroupA() 
+            : activeGroup === "B" 
+              ? renderGroupB() 
+              : renderGroupC()
+          }
+        </div>
+      </div>
+
+      <style>
+        {`
+        /* Set dark theme background */
+        html, body {
+          height: 100%;
+          margin: 0;
+          padding: 0;
+          font-family: Arial, sans-serif;
+          background: #121212;
+          color: #ffffff;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+        }
+
+        .page-title {
+          text-align: center;
+          font-size: 18px;
+          margin-top: 10px;
+          color: #bb86fc;
+        }
+
+        .layout-container {
+          display: flex;
+          flex-direction: column;
+          width: 95vw;
+          height: 95vh;
+        }
+
+        .group-selector {
+          display: flex;
+          justify-content: flex-start;
+          margin-bottom: 10px;
+        }
+
+        .group-button {
+          background: #333;
+          color: white;
+          border: none;
+          border-radius: 5px 5px 0 0;
+          cursor: pointer;
+          padding: 10px 15px;
+          margin-right: 5px;
+        }
+
+        .group-button.active {
+          background: #bb86fc;
+        }
+
+        .container {
+          display: flex;
+          flex: 1;
+          background: #1e1e1e;
+          border-radius: 10px;
+          overflow: hidden;
+        }
+
+        .left-section, .right-section.expanded {
+          width: 50%;
+          display: flex;
+          flex-direction: column;
+          padding: 20px;
+          overflow-y: auto;
+        }
+
+        .user-profile-container {
+          display: flex;
+          flex-direction: row;
+          gap: 20px;
+          margin-bottom: 12px;
+        }
+
+        .user-dimension {
+          width: 40%;
+        }
+
+        .user-content {
+          width: 60%;
+        }
+
+        .generate-button, .small-button, .copy-button, .generate-dimensions-button {
+          background: #bb86fc; 
+          color: white;
+          border: none;
+          border-radius: 5px;
+          cursor: pointer;
+          padding: 8px 12px;
+          margin-bottom: 15px;
+        }
+
+        .generate-button:disabled, .generate-dimensions-button:disabled, .copy-button.saving {
+          background: #666;
+          cursor: not-allowed;
+        }
+        
+        .copy-button.saving:after {
+          content: '';
+          display: inline-block;
+          width: 8px;
+          height: 8px;
+          margin-left: 5px;
+          border-radius: 50%;
+          background-color: #fff;
+          animation: pulse 1s infinite;
+        }
+        
+        @keyframes pulse {
+          0% { opacity: 0.3; }
+          50% { opacity: 1; }
+          100% { opacity: 0.3; }
+        }
+
+        .small-button {
+          width: 40%;
+        }
+
+        .copy-button {
+          font-size: 14px;
+          padding: 5px 10px;
+          background: #bb86fc;
+        }
+
+        .design-guide-box {
+          flex-grow: 1;
+          min-height: 300px;
+          margin-bottom: 15px;
+        }
+
+        .notes-box, .feedback-box, .suggested-dimensions-box {
+          min-height: 80px;
+          margin-bottom: 15px;
+        }
+
+        .feedback-section {
+          display: flex;
+          flex-direction: column;
+        }
+
+        h2 {
+          color: #bb86fc;
+          margin-bottom: 10px;
+        }
+
+        textarea, input, select {
+          padding: 8px;
+          border: none;
+          border-radius: 5px;
+          background: #333;
+          color: #fff;
+          margin-bottom: 10px;
+        }
+
+        input:focus, textarea:focus, select:focus {
+          outline: 1px solid #bb86fc;
+        }
+
+        .full-width {
+          width: 100%;
+        }
+        
+        .user-profile-box {
+          min-height: 150px;
+          margin-bottom: 15px;
+        }
+        
+        .model-select {
+          width: 100%;
+          padding: 10px;
+          margin-bottom: 15px;
+          background: #333;
+          color: white;
+          border: none;
+          border-radius: 5px;
+        }
+        
+        .api-error {
+          color: #ff6b6b;
+          background: rgba(255, 107, 107, 0.1);
+          padding: 10px;
+          border-radius: 5px;
+          margin-bottom: 15px;
+          border-left: 4px solid #ff6b6b;
+        }
+        `}
+      </style>
+    </div>
+  );
+}
+
+export default App;
